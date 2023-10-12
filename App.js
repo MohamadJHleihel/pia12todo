@@ -1,15 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Button, FlatList, Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, Image, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 
-
+import TodoRow from './TodoRow';
 
 
 export default function App() {
 
  const [addtodo, setAddtodo] = useState("");
- const [todoitems, setTodoitems] = useState([ {"key":"A"}, {"key":"B"} ]);
- const [errormessage, setErrormessage] = useState("fel fel fel");
+ const [todoitems, setTodoitems] = useState([ {"key":"A", isdone: flase}, {"key":"B", isdone: true} ]);
+ const [errormessage, setErrormessage] = useState("");
+
+ function compare( a, b ) {
+  if ( b.isdone  ){
+    return -1;
+  }
+  if (  a.isdone ){
+    return 1;
+  }
+  return 0;
+}
+
 
  function addTothelist () {
    if (addtodo!=""){  
@@ -21,6 +32,18 @@ export default function App() {
       }
  }
 
+ function changeDone(rownumber){
+  const newlist = [...todoitems] ;
+if (newlist [rownumber]. isdone == true) {
+newlist [rownumber]. isdone = false;
+}
+else {
+newlist [rownumber]. isdone = true;
+
+ }
+ newlist.sort(compare);
+setTodoitems(newlist);
+ }
 
 
   const [mynumber, setMynumber] = useState(0);
@@ -39,9 +62,13 @@ export default function App() {
      }}/>
      <FlatList 
      data={todoitems}
-     renderItem = {({item}) => 
-      <Text>{item.key}</Text>
-    }
+     renderItem = {({item, index}) => 
+     <TouchableOpacity onPress={( )=> {
+      changeDone(index);
+     }}>
+      <TodoRow todoinfo={item} />
+      </TouchableOpacity>
+       }
       />
 
 
